@@ -2,39 +2,50 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
+# ================================
+# CONFIGURACIÓN INICIAL
+# ================================
 st.set_page_config(
-    page_title="ZAGAZ Dashboard GNV",
-    page_icon="🚗",
+    page_title="ZAGAZ · Panel Estratégico GNV",
     layout="wide"
 )
 
 # ================================
-# ESTILOS PERSONALIZADOS (AZULES)
+# ESTILO VISUAL PREMIUM
 # ================================
 st.markdown("""
 <style>
 body {
-    background-color: #f4f7fb;
-}
-h1, h2, h3 {
-    color: #0b3d91 !important;
-}
-.sidebar .sidebar-content {
-    background-color: #e9f0fb !important;
+    background-color: #0b0d10;
 }
 .big-kpi {
     padding: 25px;
-    background: #ffffff;
+    background: #10202f;
     border-radius: 12px;
-    text-align: center;
-    border-left: 6px solid #0b66c3;
-    font-size: 28px;
+    text-align: left;
+    border-left: 6px solid #16a34a;
+    font-size: 32px;
     font-weight: bold;
-    color: #0b3d91;
+    color: white;
 }
-.small-text {
+.big-sub {
+    font-size: 14px;
+    font-weight: normal;
+    color: #9bb8d1;
+}
+.insight-box {
+    background: #1b2735;
+    padding: 20px;
+    border-radius: 12px;
+    border-left: 5px solid #3b82f6;
+    color: #e0e6ed;
     font-size: 16px;
-    color: #1d4e89;
+}
+.section-title {
+    font-size: 26px;
+    color: #16a34a;
+    font-weight: bold;
+    padding-top: 20px;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -45,98 +56,110 @@ h1, h2, h3 {
 @st.cache_data
 def load_data():
     try:
-        df = pd.read_excel("DATASET VALORES.xlsx")
+        return pd.read_excel("DATASET VALORES.xlsx")
     except:
-        df = pd.read_csv("DATASET VALORES.csv")
-    return df
+        return pd.read_csv("DATASET VALORES.csv")
 
 df = load_data()
 
-st.title("📊 Dashboard Estratégico — ZAGAZ GNV")
+st.title("🚀 ZAGAZ · Dashboard Estratégico GNV")
+st.markdown("## Decisiones basadas en datos — Segmentos, adopción, miedos y oportunidades")
 
 # ================================
-# KPIs PRINCIPALES
+# FILTROS
 # ================================
+st.sidebar.header("🔍 Filtros del Panel")
+
+zona_f = st.sidebar.multiselect("Zonas", df["Zona"].unique(), default=df["Zona"].unique())
+perfil_f = st.sidebar.multiselect("Perfil de Adopción", df["Perfil_Adopción"].unique(), default=df["Perfil_Adopción"].unique())
+
+df_fil = df[df["Zona"].isin(zona_f)]
+df_fil = df_fil[df_fil["Perfil_Adopción"].isin(perfil_f)]
+
+# ================================
+# KPI CARDS
+# ================================
+st.markdown("<div class='section-title'>Indicadores Clave</div>", unsafe_allow_html=True)
+
 col1, col2, col3, col4 = st.columns(4)
 
-with col1:
-    st.markdown(f"<div class='big-kpi'>{len(df)}<br><span class='small-text'>Registros Totales</span></div>", unsafe_allow_html=True)
+# Consumo promedio
+consumo = df_fil["Consumo_Diario_Lts"].mean()
+col1.markdown(f"<div class='big-kpi'>{consumo:.1f} Lts<br><span class='big-sub'>Consumo Diario Promedio</span></div>", unsafe_allow_html=True)
 
-with col2:
-    st.markdown(f"<div class='big-kpi'>{df['Tipo de unidad'].mode()[0]}<br><span class='small-text'>Vehículo Predominante</span></div>", unsafe_allow_html=True)
+# % Conoce GNV
+conocen = df_fil["Conocimiento_GNV"].isin(["Medio", "Alto"]).mean() * 100
+col2.markdown(f"<div class='big-kpi'>{conocen:.1f}%<br><span class='big-sub'>Conocimiento del GNV</span></div>", unsafe_allow_html=True)
 
-with col3:
-    st.markdown(f"<div class='big-kpi'>{df['Marca'].mode()[0]}<br><span class='small-text'>Marca Dominante</span></div>", unsafe_allow_html=True)
+# % dispuestos
+dispuestos = (df_fil["Disposición_GNV"] == "Sí").mean() * 100
+col3.markdown(f"<div class='big-kpi'>{dispuestos:.1f}%<br><span class='big-sub'>Disposición a Convertir</span></div>", unsafe_allow_html=True)
 
-with col4:
-    st.markdown(f"<div class='big-kpi'>{df['Tipo_Combustible'].mode()[0]}<br><span class='small-text'>Combustible Actual</span></div>", unsafe_allow_html=True)
-
-st.markdown("---")
-
-# ================================
-# FILTROS LATERALES
-# ================================
-st.sidebar.header("🔎 Filtros del Dashboard")
-
-marca_filtro = st.sidebar.multiselect("Marca", df["Marca"].unique())
-unidad_filtro = st.sidebar.multiselect("Tipo de unidad", df["Tipo de unidad"].unique())
-zona_filtro = st.sidebar.multiselect("Zona", df["Zona"].unique())
-
-df_filtrado = df.copy()
-if marca_filtro:
-    df_filtrado = df_filtrado[df_filtrado["Marca"].isin(marca_filtro)]
-if unidad_filtro:
-    df_filtrado = df_filtrado[df_filtrado["Tipo de unidad"].isin(unidad_filtro)]
-if zona_filtro:
-    df_filtrado = df_filtrado[df_filtrado["Zona"].isin(zona_filtro)]
-
-st.subheader("📈 Visualizaciones Interactivas")
+# Visionarios
+vis = (df_fil["Perfil_Adopción"] == "Visionario").mean() * 100
+col4.markdown(f"<div class='big-kpi'>{vis:.1f}%<br><span class='big-sub'>Visionarios Detectados</span></div>", unsafe_allow_html=True)
 
 # ================================
-# GRAFICO 1 — Distribución de vehículo
+# INSIGHTS AUTOMÁTICOS (INTELIGENCIA)
 # ================================
-fig1 = px.histogram(
-    df_filtrado,
-    x="Tipo de unidad",
-    color="Tipo de unidad",
-    title="Distribución por Tipo de Unidad",
-    color_discrete_sequence=px.colors.sequential.Blues
+st.markdown("<div class='section-title'>📌 Insights Estratégicos Automáticos</div>", unsafe_allow_html=True)
+
+insights = []
+
+# Insight 1: zona con mayor disposición
+zona_disp = df_fil.groupby("Zona")["Disposición_GNV"].apply(lambda x: (x=="Sí").mean()*100)
+if not zona_disp.empty:
+    z_max = zona_disp.idxmax()
+    pct = zona_disp.max()
+    consumo_z = df_fil[df_fil["Zona"]==z_max]["Consumo_Diario_Lts"].mean()
+    insights.append(f"La zona **{z_max}** presenta la mayor disposición ({pct:.1f}%), con un consumo promedio de **{consumo_z:.1f} Lts**. Es un segmento prioritario.")
+
+# Insight 2: miedo dominante
+miedo_dom = df_fil["Miedo_GNV"].mode()
+if not miedo_dom.empty:
+    insights.append(f"El miedo dominante es **{miedo_dom.iloc[0]}**. Conviene preparar mensajes educativos específicos para esta objeción.")
+
+# Insight 3: tipo de unidad más rentable
+unidad_rank = df_fil.groupby("Tipo de unidad")["Consumo_Diario_Lts"].mean().sort_values(ascending=False)
+if not unidad_rank.empty:
+    insights.append(f"El tipo de unidad con mayor consumo promedio es **{unidad_rank.index[0]}** ({unidad_rank.iloc[0]:.1f} Lts). Perfecto para campañas iniciales.")
+
+# Insight 4: perfil prioritario
+insights.append(f"Del total filtrado, **{vis:.1f}%** son visionarios. Recomendado enfocar la fase 1 solo en estos operadores.")
+
+# Mostrar insights
+for i in insights:
+    st.markdown(f"<div class='insight-box'>{i}</div>", unsafe_allow_html=True)
+
+# ================================
+# GRÁFICAS PROFESIONALES
+# ================================
+st.markdown("<div class='section-title'>📊 Visualizaciones Clave</div>", unsafe_allow_html=True)
+
+# DISTRIBUCIÓN DE PERFILES
+fig_perfil = px.bar(
+    df_fil["Perfil_Adopción"].value_counts().reset_index(),
+    x="index", y="Perfil_Adopción",
+    title="Distribución de Perfiles de Adopción",
+    labels={"index": "Perfil", "Perfil_Adopción": "Cantidad"},
+    color="index",
+    color_discrete_sequence=px.colors.qualitative.Set2
 )
-st.plotly_chart(fig1, use_container_width=True)
+st.plotly_chart(fig_perfil, use_container_width=True)
 
-# ================================
-# GRAFICO 2 — Marcas más comunes
-# ================================
-fig2 = px.histogram(
-    df_filtrado,
-    x="Marca",
-    color="Marca",
-    title="Marcas Más Utilizadas",
-    color_discrete_sequence=px.colors.sequential.Blues
+# MIEDOS GNV
+fig_miedos = px.bar(
+    df_fil["Miedo_GNV"].value_counts().reset_index(),
+    x="index", y="Miedo_GNV",
+    title="Miedos principales frente al GNV",
+    labels={"index": "Miedo", "Miedo_GNV": "Cantidad"},
+    color="index",
+    color_discrete_sequence=px.colors.qualitative.Set3
 )
-st.plotly_chart(fig2, use_container_width=True)
+st.plotly_chart(fig_miedos, use_container_width=True)
 
 # ================================
-# GRAFICO 3 — Consumo diario
+# TABLA FINAL
 # ================================
-fig3 = px.box(
-    df_filtrado,
-    y="Consumo_Diario_Lts",
-    title="Rango de Consumo Diario de Combustible",
-    color_discrete_sequence=["#0b66c3"]
-)
-st.plotly_chart(fig3, use_container_width=True)
-
-# ================================
-# DESCARGA DEL DATASET
-# ================================
-st.subheader("⬇️ Descargar Datos")
-
-st.download_button(
-    label="Descargar dataset en CSV",
-    data=df_filtrado.to_csv(index=False),
-    file_name="dataset_filtrado_zagaz.csv",
-    mime="text/csv"
-)
-
-st.success("Dashboard listo y corriendo en Streamlit Cloud cuando lo publiques.")
+st.markdown("<div class='section-title'>📋 Tabla Filtrada</div>", unsafe_allow_html=True)
+st.dataframe(df_fil)
