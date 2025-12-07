@@ -2,13 +2,6 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-<<<<<<< HEAD
-=======
-# FIX para advertencias de Pylance
-fmt_or_dash = None
-
-
->>>>>>> 8516d49
 # =========================================
 # CONFIGURACIÓN GENERAL
 # =========================================
@@ -23,12 +16,12 @@ st.set_page_config(
 # =========================================
 st.markdown("""
 <style>
+
 /* Fondo general */
 body {
     background-color: #f3f6f4;
 }
 
-<<<<<<< HEAD
 /* Contenedor principal */
 .block-container {
     padding-top: 0.5rem;
@@ -47,15 +40,18 @@ body {
     align-items: center;
     justify-content: space-between;
 }
+
 .zg-title {
     font-size: 1.8rem;
     font-weight: 800;
     margin-bottom: 0.15rem;
 }
+
 .zg-subtitle {
     font-size: 0.9rem;
     opacity: 0.9;
 }
+
 .zg-badge {
     padding: 0.35rem 0.9rem;
     border-radius: 999px;
@@ -73,6 +69,7 @@ body {
     box-shadow: 0 4px 16px rgba(15,23,42,0.10);
     border-left: 6px solid #16a34a;
 }
+
 .kpi-label {
     font-size: 0.80rem;
     text-transform: uppercase;
@@ -80,75 +77,26 @@ body {
     color: #64748b;
     margin-bottom: 0.35rem;
 }
+
 .kpi-value {
     font-size: 1.7rem;
     font-weight: 800;
     color: #0f172a;
     margin-bottom: 0.10rem;
 }
+
 .kpi-extra {
     font-size: 0.80rem;
     color: #0f766e;
 }
 
-/* Sección de título */
-=======
-.big-kpi {
-    padding: 25px;
-    background: #10202f;
-    border-radius: 12px;
-    text-align: left;
-    border-left: 6px solid #16a34a;   /* ← corregido */
-    font-size: 32px;
-    font-weight: bold;
-    color: white;
-}
-
-.big-sub {
-    font-size: 14px;
-    font-weight: normal;
-    color: #9bb8d1;
-}
-
-.insight-box {
-    background: #1b2735;
-    padding: 20px;
-    border-radius: 12px;
-    border-left: 5px solid #3b82f6;
-    color: #e0e6ed;
-    font-size: 16px;
-}
-
->>>>>>> 8516d49
+/* Título de sección */
 .section-title {
     font-size: 1.1rem;
     font-weight: 800;
     margin-top: 1.5rem;
     margin-bottom: 0.4rem;
     color: #0f172a;
-<<<<<<< HEAD
-}
-
-/* Caja de insights */
-.insight-box {
-    background: #0f172a;
-    color: #e2f3ed;
-    border-radius: 14px;
-    padding: 0.9rem 1.0rem;
-    margin-bottom: 0.45rem;
-    border-left: 5px solid #22c55e;
-    font-size: 0.95rem;
-}
-
-/* Etiqueta de filtros */
-.filtros-chip {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #6b7280;
-    margin-bottom: 0.1rem;
-=======
->>>>>>> 8516d49
 }
 
 /* Caja de insights */
@@ -174,7 +122,8 @@ body {
 </style>
 """, unsafe_allow_html=True)
 
-<<<<<<< HEAD
+
+
 # =========================================
 # UTILIDADES
 # =========================================
@@ -188,10 +137,6 @@ def fmt_or_dash(value, fmt="{:,.1f}"):
         return "—"
 
 # =========================================
-=======
-
-# ================================
->>>>>>> 8516d49
 # CARGA DE DATOS
 # =========================================
 @st.cache_data
@@ -203,7 +148,7 @@ df = load_data()
 df = df.copy()
 
 # =========================================
-# ENCABEZADO (SIN LOGO POR AHORA)
+# ENCABEZADO
 # =========================================
 st.markdown(
     """
