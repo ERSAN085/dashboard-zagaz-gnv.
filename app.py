@@ -15,24 +15,28 @@ st.set_page_config(
 # ================================
 st.markdown("""
 <style>
+
 body {
     background-color: #0b0d10;
 }
+
 .big-kpi {
     padding: 25px;
     background: #10202f;
     border-radius: 12px;
     text-align: left;
-    border-left: 6px solid #16a34a;
+    border-left: 6px solid #16a34a;   /* ← corregido */
     font-size: 32px;
     font-weight: bold;
     color: white;
 }
+
 .big-sub {
     font-size: 14px;
     font-weight: normal;
     color: #9bb8d1;
 }
+
 .insight-box {
     background: #1b2735;
     padding: 20px;
@@ -41,14 +45,17 @@ body {
     color: #e0e6ed;
     font-size: 16px;
 }
+
 .section-title {
     font-size: 26px;
     color: #16a34a;
     font-weight: bold;
     padding-top: 20px;
 }
+
 </style>
 """, unsafe_allow_html=True)
+
 
 # ================================
 # CARGA DE DATOS
